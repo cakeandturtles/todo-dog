@@ -24,9 +24,30 @@ window.onclick = function(e){
         todo_prompt_dom.focus();
     }
 }
+window.onkeydown = function(e){
+    //page up
+    if (e.keyCode == 33){
+        todoFirstTextbox(e);
+    }
+    if (e.keyCode == 34){
+        todoLastTextbox(e);
+    }
 
-var TODO_NEW = 13;
-var TODO_DEL = 8;
+    //tab or down arrow
+    if ((e.keyCode == 9 && !e.shiftKey) || e.keyCode == 40){
+        e.preventDefault();
+        todoNextTextbox(e);
+    }
+
+    //shift+tab or up arrow
+    if ((e.keyCode == 9 && e.shiftKey) || e.keyCode == 38){
+        e.preventDefault();
+        todoPrevTextbox(e);
+    }
+}
+
+var TODO_NEW = 13; //enter
+var TODO_DEL = 8; //backspace
 
 function todoPromptKeyPress(e, dom){
     //enter key when input not empty (add new item!!)
@@ -82,12 +103,6 @@ function todoTextboxKeyPress(e, dom){
     else if (e.keyCode == TODO_NEW){
         //there actually is text!!
         if (dom.value != ""){
-            var text_dom = findTodoTextByIndex(index);
-            //remember the changed value
-            var text = dom.value;
-            todos[index].text = text;
-            text_dom.innerHTML = text;
-
             todoTextboxBlur(null, dom);
             //refocus the prompt (manually because otherwise is only done on window click)
             todo_prompt_dom.focus();
@@ -103,6 +118,11 @@ function todoTextboxPaste(e, dom){
 function todoTextboxBlur(e, dom){
     var index = parseInt(dom['todo-index']);
     var text_dom = findTodoTextByIndex(index);
+
+    //remember the changed value
+    var text = dom.value;
+    todos[index].text = text;
+    text_dom.innerHTML = text;
 
     //hide the textbox
     dom.style.display = "none";
@@ -120,6 +140,74 @@ function todoTextClick(e, dom){
     textbox.focus();
     //select all text for easy replacing/deleting??
     textbox.select();
+}
+
+function todoNextTextbox(e){
+    var activeElement = document.activeElement;
+    var index = parseInt(activeElement['todo-index']);
+
+    var next = findTodoTextByIndex(index+1);
+    //move on to the next textbox!
+    if (next != null && next != undefined){
+        if (index > -1)
+            todoTextboxBlur(e, activeElement);
+        todoTextClick(e, next);
+    }
+    //move back to the prompt!
+    else{
+        if (index > -1)
+            todoTextboxBlur(e, activeElement);
+        //again, not sure if redundant
+        todo_prompt_dom.focus();
+        todo_prompt_dom.select();
+    }
+}
+
+function todoPrevTextbox(e){
+    var activeElement = document.activeElement;
+    var index = parseInt(activeElement['todo-index']);
+
+    var prev = findTodoTextByIndex(index-1);
+    if (index-1 == -1) prev = todo_prompt_dom;
+
+    //move on to the prev textbox!
+    if (prev != null && prev != undefined){
+        if (index > -1)
+            todoTextboxBlur(e, activeElement);
+        if (index-1 > -1)
+            todoTextClick(e, prev);
+        else{
+            //again, not sure if redundant
+            todo_prompt_dom.focus();
+            todo_prompt_dom.select();
+        }
+    }
+    //move back to the last element!
+    else{
+        if (index > -1)
+            todoTextboxBlur(e, activeElement);
+
+        var last_elem = findTodoTextByIndex(todos.length-1);
+        todoTextClick(e, last_elem);
+    }
+}
+
+function todoFirstTextbox(e){
+    var activeElement = document.activeElement;
+    var index = parseInt(activeElement['todo-index']);
+    if (index != -1)
+        todoTextboxBlur(e, activeElement);
+    //again not sure if redundant
+    todo_prompt_dom.focus();
+    todo_prompt_dom.select();
+}
+function todoLastTextbox(e){
+    var activeElement = document.activeElement;
+    var index = parseInt(activeElement['todo-index']);
+    if (index != -1)
+        todoTextboxBlur(e, activeElement);
+    var last_elem = findTodoTextByIndex(todos.length-1);
+    todoTextClick(e, last_elem);
 }
 
 /////////////////////////////////////////////////////////
