@@ -7,7 +7,26 @@ body{
 }
 .todo-text{
     font-family: monospace;
-    margin-bottom: 8px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    display: inline-block;
+    width: 60%;
+    cursor: text;
+}
+.todo-text:hover{
+    background: #eeeeee;
+}
+.todo-textbox{
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-family: monospace;
+    width: 60%;
+}
+#todo-check-index--1{
+    visibility: hidden;
+}
+#todo-textbox-index--1{
+    margin-bottom: 12px;
 }
 .todo-check{
     /* Double-sized Checkboxes */
@@ -20,8 +39,10 @@ body{
     <script src="javascript/todo.js"></script>
 </head>
 <body>
-    <input class="todo-check" type="checkbox" id="check_0">
-    <input class="todo-text" type="textbox" id="item_0" placeholder="write a todo">
+    <input class="todo-check" type="checkbox"
+        id="todo-check-index--1">
+    <input class="todo-textbox" type="textbox"
+        id="todo-textbox-index--1" placeholder="write a todo">
 
     <div id="todo_list">
     </div>
