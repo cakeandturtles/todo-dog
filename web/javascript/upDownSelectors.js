@@ -19,7 +19,9 @@ function todoNextTextbox(e) {
     var index = parseInt(activeElement['todo-index']);
     var next = findTodoTextByIndex(index + 1);
     if (next != null && next != undefined) {
-        console.log(next);
+        if (index > -1)
+            todoTextboxBlur(null, activeElement);
+        next = findTodoTextByIndex(index + 1);
         todoTextClick(null, next);
     }
     else {
@@ -37,8 +39,10 @@ function todoPrevTextbox(e) {
     if (prev != null && prev != undefined) {
         if (index > -1)
             todoTextboxBlur(e, activeElement);
-        if (index - 1 > -1)
+        if (index - 1 > -1) {
+            prev = findTodoTextByIndex(index - 1);
             todoTextClick(e, prev);
+        }
         else
             todo_prompt_dom.select();
     }

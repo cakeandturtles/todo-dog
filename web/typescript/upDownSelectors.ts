@@ -29,9 +29,10 @@ function todoNextTextbox(e){
     var next = findTodoTextByIndex(index+1);
     //move on to the next textbox!
     if (next != null && next != undefined){
-        /*if (index > -1)
-            todoTextboxBlur(null, activeElement);*/
-        console.log(next);
+        if (index > -1)
+            todoTextboxBlur(null, activeElement);
+        //have to reget it because blur recreated all the items
+        next = findTodoTextByIndex(index+1);
         todoTextClick(null, next);
     }
     //move back to the prompt!
@@ -53,8 +54,11 @@ function todoPrevTextbox(e){
     if (prev != null && prev != undefined){
         if (index > -1)
             todoTextboxBlur(e, activeElement);
-        if (index-1 > -1)
+        if (index-1 > -1){
+            //have to reget it because blur recreated all the items
+            prev = findTodoTextByIndex(index-1);
             todoTextClick(e, prev);
+        }
         else todo_prompt_dom.select();
     }
     //move back to the last element!
