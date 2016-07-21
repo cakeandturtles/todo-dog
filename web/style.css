@@ -16,6 +16,21 @@ body{
 .todo-text:hover{
     background: #eeeeee;
 }
+.todo-text-checked{
+    font-family: monospace;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    display: inline-block;
+    width: 60%;
+    cursor: text;
+
+    text-decoration: line-through;
+    color: #cccccc;
+}
+.todo-text-checked:hover{
+    background: #eeeeee;
+}
+
 .todo-textbox{
     padding-top: 4px;
     padding-bottom: 4px;
@@ -39,13 +54,17 @@ body{
   -webkit-transform: scale(2); /* Safari and Chrome */
   -o-transform: scale(2); /* Opera */
 }
+.todo-check:checked{
+    -webkit-filter: opacity(50%);
+    filter: opacity(50%);
+}
 #floating-logo{
 	position:absolute;
 	right: 10px;
-	top: 10px;
+	top: 32px;
 }
 #floating-text{
     position: absolute;
     right: 100px;
-    top: 10px;
+    top: 32px;
 }

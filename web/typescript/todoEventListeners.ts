@@ -2,14 +2,40 @@ var TODO_NEW = 13; //enter
 var TODO_DEL = 8; //backspace
 var TODO_ESC = 27;
 
+function todoCheckClick(e, dom){
+    var index = parseInt(dom['todo-index']);
+    var text_dom = findTodoTextByIndex(index);
+    if (dom.checked){
+        text_dom.className = "todo-text-checked";
+    }else{
+        text_dom.className = "todo-text";
+    }
+
+    todos[index].checked = dom.checked;
+    saveTodo(todos);
+}
+
 function todoPromptKeyDown(e, dom){
     //enter key when input not empty (add new item!!)
     if (e.keyCode == TODO_NEW && dom.value != ""){
         addTodoItem(dom.value, 0, null);
+        var text = dom.value;
         dom.value = "";
 
+        //if user put a ":" at the end... start a list!!!
+        var start_subtasks = false;
+        if (text[text.length-1] == ":"){
+            todos[0].subtasks.push(new TodoItem("", false));
+            start_subtasks = true;
+        }
         //regenerate todo list
         createTodoListFromItems(todos);
+        //if we're starting subtasks, focus the current subtask!
+        if (start_subtasks){
+            var text_dom = findTodoTextByIndex("0_0");
+            console.log(text_dom);
+            todoTextClick(null, text_dom);
+        }
     }
     else{
         //try to search for date/time in text!!!
@@ -37,45 +63,67 @@ function todoPromptPaste(e, dom){
     }
 }
 function todoTextboxKeyDown(e, dom){
-    var index = parseInt(dom['todo-index']);
-    todos[index].text = dom.value;
+    //deal with subtasks
+    var index_text = dom['todo-index'];
+    var indices = index_text.split("_");
+    //make a "fake" todo with subtasks being all todo items
+    var todo = new TodoItem("", false); todo.subtasks = todos;
+    var parent = todo;
+    for (var i = 0; i < indices.length; i++){
+        parent = todo;
+        todo = todo.subtasks[parseInt(indices[i])];
+    }
+    //remember the changed value
+    todo.text = dom.value;
 
     //pressing enter
     if (e.keyCode == TODO_NEW){
         //there actually is text!!
         if (dom.value != ""){
             todoTextboxBlur(null, dom);
+            //if we are on a subtask list... create a new subtask!!!
+            //and then select it
+            if (indices.length > 1){
+                parent.subtasks.push(new TodoItem("", false));
+                var last_index = parseInt(indices[indices.length-1]);
+                indices[indices.length-1] = ""+(last_index+1);
+                createTodoListFromItems(todos);
+                var new_subtask_dom = findTodoTextByIndex(indicesToIndexText(indices));
+                todoTextClick(null, new_subtask_dom);
+            }
         }else{
-            deleteTodo(index);
+            deleteTodo(index_text);
             todo_prompt_dom.select();
             return;
         }
     }
     if (e.keyCode == TODO_DEL){
         if (dom['value'] === ""){
-            var index_str = dom['todo-index'];
-            if (index_str !== undefined && index_str !== null){
-                var index = parseInt(index_str);
-                deleteTodo(index);
-                if (index > 0){
-                    createTodoListFromItems(todos);
-                    window.setTimeout(function(){
-                        todoTextClick(null, findTodoTextByIndex(index-1));
-                    }, 100);
-                }else{
-                    todo_prompt_dom.select();
-                }
-                return;
+            deleteTodo(index_text);
+
+            createTodoListFromItems(todos);
+            console.log(index_text);
+            index_text = getPrevIndex(index_text);
+            console.log(index_text);
+            if (index_text != "-1"){
+                window.setTimeout(function(){
+                    todoTextClick(null, findTodoTextByIndex(index_text));
+                }, 100);
             }
+            else
+                todo_prompt_dom.select();
+
+            return;
         }
     }
     if (e.keyCode == TODO_ESC){
+        if (dom.value == "")
+            deleteTodo(index_text);
         todo_prompt_dom.select();
     }
 
     //remember the changed value
-    var text = dom.value;
-    todos[index].text = text;
+    todo.text = dom.value;
 
     upDownSelectors(e);
 }
@@ -88,12 +136,21 @@ function todoTextboxBlur(e, dom){
 }
 
 function todoTextClick(e, dom){
-    var index = parseInt(dom['todo-index']);
-    var textbox = findTodoTextboxByIndex(index);
+    //deal with subtasks
+    var index_text = dom['todo-index'];
+    var indices = index_text.split("_");
+    //make a "fake" todo with subtasks being all todo items
+    var todo = new TodoItem("", false); todo.subtasks = todos;
+    for (var i = 0; i < indices.length; i++){
+        todo = todo.subtasks[parseInt(indices[i])];
+    }
+
+    var textbox = findTodoTextboxByIndex(index_text);
 
     dom.style.display = "none";
     textbox.style.display = "inline-block";
-    textbox.value = todos[index].text;
+
+    textbox.value = todo.text;
 
     //select all text for easy replacing/deleting??
     textbox.select();

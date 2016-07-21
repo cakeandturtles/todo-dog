@@ -1,22 +1,23 @@
 function saveTodo(todos) {
     if (typeof (Storage) !== undefined) {
-        saveToLocalStorage(todos);
+        saveToLocalStorage(todos, "");
     }
     else {
     }
 }
 function loadTodo() {
     if (typeof (Storage) !== undefined) {
-        return loadFromLocalStorage();
+        return loadFromLocalStorage("");
     }
     else {
     }
 }
-function saveToLocalStorage(todos) {
+function saveToLocalStorage(todos, prefix) {
     try {
-        localStorage.setItem("num_todos", todos.length.toString());
+        localStorage.setItem(prefix + "num_todos", todos.length.toString());
         for (var i = 0; i < todos.length; i++) {
-            localStorage.setItem("todo-" + i, todos[i].createString());
+            localStorage.setItem(prefix + "todo-" + i, todos[i].createString());
+            saveToLocalStorage(todos[i].subtasks, prefix + "todo-" + i);
         }
         return true;
     }
@@ -25,13 +26,15 @@ function saveToLocalStorage(todos) {
         return false;
     }
 }
-function loadFromLocalStorage() {
+function loadFromLocalStorage(prefix) {
     var todos = [];
     try {
-        var num_todos = parseInt(localStorage.getItem("num_todos"));
+        var num_todos = parseInt(localStorage.getItem(prefix + "num_todos"));
         for (var i = 0; i < num_todos; i++) {
-            var todo_string = localStorage.getItem("todo-" + i);
-            todos.push(TodoItem.fromString(todo_string));
+            var todo_string = localStorage.getItem(prefix + "todo-" + i);
+            var todo = TodoItem.fromString(todo_string);
+            todo.subtasks = loadFromLocalStorage(prefix + "todo-" + i);
+            todos.push(todo);
         }
     }
     catch (err) {
