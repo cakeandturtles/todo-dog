@@ -1,8 +1,22 @@
-function saveTodo(todos) {
-    if (typeof (Storage) !== undefined) {
-        saveToLocalStorage(todos, "");
+function saveTodo(todos, callback) {
+    var selector_validator = getCredentials();
+    if (selector_validator !== undefined && selector_validator !== null) {
+        var selector_validator_arr = selector_validator.split(":");
+        var selector = selector_validator_arr[0];
+        var validator = selector_validator_arr[1];
+        save_todo_php(selector, validator, todoToString(todos), callback);
     }
     else {
+        localStorageFallback(callback);
+    }
+    function localStorageFallback(callback) {
+        if (typeof (Storage) !== undefined) {
+            saveToLocalStorage(todos, "");
+            callback(false, "saved to local storage, not logged in");
+        }
+        else {
+            alert('need to add cookie support. email cakeandturtles@gmail.com');
+        }
     }
 }
 function loadTodo() {
@@ -11,6 +25,18 @@ function loadTodo() {
     }
     else {
     }
+}
+function todoToString(todos, indent) {
+    if (indent === void 0) { indent = 0; }
+    var todo_text = "";
+    for (var i = 0; i < todos.length; i++) {
+        for (var j = 0; j < indent; j++) {
+            todo_text += " ";
+        }
+        todo_text += todos[i].createString();
+        todo_text += todoToString(todos[i].subtasks, indent + 4);
+    }
+    return todo_text;
 }
 function saveToLocalStorage(todos, prefix) {
     try {

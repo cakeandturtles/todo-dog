@@ -1,12 +1,12 @@
 function login(username, password){
     var notification_div = document.getElementById("login_notification");
 
-    login_php(username, password, function(success, notification){
+    login_php(username, password, function(success, notification, selector_validator){
         notification_div.innerHTML = notification;
 
         if (success){
-            alert("what should we do with mismatched todo lists? between server/local");
-            storeCredentials(username, password);
+            storeCredentials(selector_validator);
+            alert("what to do in case of a mismatch of todo local and server?");
 
             document.getElementById("dialogConfirm").innerHTML = "OK";
             document.getElementById("dialogButton").style.display = "none";
@@ -17,11 +17,14 @@ function login(username, password){
 function signup(username, password){
     var notification_div = document.getElementById("login_notification");
 
-    signup_php(username, password, function(success, notification){
+    signup_php(username, password, function(success, notification, selector_validator){
         notification_div.innerHTML = notification;
 
         if (success){
-            storeCredentials(username, password);
+            storeCredentials(selector_validator);
+            saveTodo(todos, function(success, notification2){
+                notification_div.innerHTML += "<br>" + notification2;
+            });
 
             document.getElementById("dialogConfirm").innerHTML = "OK";
             document.getElementById("dialogButton").style.display = "none";
@@ -66,6 +69,15 @@ function trySignup(e){
 
     if (username == "" || password == ""){
         notification_div.innerHTML = "must enter username and password!";
+    }
+    else if (username.length > 64){
+        notification_div.innerHTML = "username must be less than 64 characters!";
+    }
+    else if (password.length < 6){
+        notification_div.innerHTML = "password must be at least 6 characters long!";
+    }
+    else if (password.length > 64){
+        notification_div.innerHTML = "password must be less than 64 characters!";
     }
     else if (confirm != password){
         notification_div.innerHTML = "passwords do not match!";
@@ -147,4 +159,5 @@ function loginDomClick(e){
     login_form.appendChild(signup_button);
 
     Dialog.AddElement(login_form);
+    username_input.focus();
 }

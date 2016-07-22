@@ -1,4 +1,29 @@
-function storeCredentials(username, password){
-    alert("how to remain logged in and store session data..");
-    console.log("http://stackoverflow.com/questions/549/the-definitive-guide-to-form-based-website-authentication?rq=1");
+function storeCredentials(selector_validator){
+    setCookie("selector_validator", selector_validator, 256);
+}
+
+function getCredentials(){
+    return getCookie("selector_validator");
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
 }
