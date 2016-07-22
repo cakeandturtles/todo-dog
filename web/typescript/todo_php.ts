@@ -2,6 +2,8 @@ function save_todo_php(selector, validator, todo_text, callback){
     //scrub a dub dub that todo_text
     todo_text = todo_text.split("&").join("aanndd");
     todo_text = todo_text.split("=").join("eeqquuaallss");
+    console.log("todo text");
+    console.log(todo_text);
 
     xmlHttpRequest("php/save_todo.php",
         "selector="+selector+"&validator="+validator+"&todo_text="+todo_text,

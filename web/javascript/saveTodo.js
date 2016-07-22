@@ -4,9 +4,12 @@ function saveTodo(todos, callback) {
         var selector_validator_arr = selector_validator.split(":");
         var selector = selector_validator_arr[0];
         var validator = selector_validator_arr[1];
+        console.log(">selector: " + selector);
+        console.log(">validator: " + validator);
         save_todo_php(selector, validator, todoToString(todos), callback);
     }
     else {
+        alert("local storage fallback!");
         localStorageFallback(callback);
     }
     function localStorageFallback(callback) {
