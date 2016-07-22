@@ -1,22 +1,6 @@
 var todo_prompt_dom;
 var todo_list_dom;
 var todos = [];
-function flatpickr(selector, options) {
-    if (options === void 0) { options = undefined; }
-}
-;
-function main() {
-    todos = loadTodo();
-    todo_list_dom = document.getElementById("todo_list");
-    todo_prompt_dom = document.getElementById("todo-textbox-index--1");
-    todo_prompt_dom.onkeydown = function (e) { todoPromptKeyDown(e, todo_prompt_dom); };
-    todo_prompt_dom.onpaste = function (e) { todoPromptPaste(e, todo_prompt_dom); };
-    todo_prompt_dom.focus();
-    todo_prompt_dom['todo-index'] = -1;
-    flatpickr('.flatpickr');
-    createTodoListFromItems(todos, false);
-}
-window.onload = main;
 function getPrevIndex(index_text) {
     var indices = index_text.split("_");
     var i = indices.length - 1;
