@@ -1,10 +1,9 @@
 todo::
 
 [ ] - allow users to create account/login
-	[ ] - when logged in, save todo file to cakeandturtles db
-	[ ] - when opening site, check log in status (localStorage)
-		[ ] - if logged on, load todo file from cakeandturtles db
-	[ ] - I don't know anything about authentication/db use...
+    [ ] - also need to load/check todo on server periodically??
+            (in case user changed it from another client)
+
 [ ] - reminders? due dates? autoorganize by date/reminder?
     [ ] - should get due date to store time/date on todo item
         - represent text as "text @ time - date"

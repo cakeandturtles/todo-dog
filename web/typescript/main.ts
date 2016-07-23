@@ -1,10 +1,19 @@
 //dummy lib functions (will be loaded through index)
 function flatpickr(selector, options = undefined){};
 
+var USERNAME = null;
 function main(){
-    //try to load the todos!
-    todos = loadTodo();
+    loadTodo(function(username, todo_list, result_text){
+        todos = todo_list;
+        USERNAME = username;
 
+        initApp();
+    });
+}
+window.onload = main;
+
+function initApp(){
+    //set up todo prompt dom
     todo_list_dom = document.getElementById("todo_list");
 
     todo_prompt_dom = <HTMLInputElement>document.getElementById("todo-textbox-index--1");
@@ -22,4 +31,3 @@ function main(){
     //generate the list!
     createTodoListFromItems(todos, false);
 }
-window.onload = main;

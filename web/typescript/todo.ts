@@ -56,6 +56,11 @@ class TodoItem{
     }
 
     public static fromString(todo_string: string): TodoItem{
+        //get rid of any \t at beginning
+        while (todo_string[0] == '\t'){
+            todo_string = todo_string.slice(1);
+        }
+
         var checked = todo_string[1] == "x";
         todo_string = todo_string.slice(6, todo_string.length);
         var text = todo_string;
@@ -99,7 +104,9 @@ function createTodoListFromItems(todos:Array<TodoItem>, save_list: boolean = tru
     }
 
     if (save_list)
-        saveTodo(todos);
+        saveTodo(todos, function(success, result_text){
+            //TODO??
+        });
 }
 
 function createTodoItem(todo: TodoItem, index: string, indent: number){

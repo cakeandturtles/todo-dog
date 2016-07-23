@@ -49,6 +49,9 @@ var TodoItem = (function () {
         this.subtasks = [];
     }
     TodoItem.fromString = function (todo_string) {
+        while (todo_string[0] == '\t') {
+            todo_string = todo_string.slice(1);
+        }
         var checked = todo_string[1] == "x";
         todo_string = todo_string.slice(6, todo_string.length);
         var text = todo_string;
@@ -83,7 +86,8 @@ function createTodoListFromItems(todos, save_list) {
         createTodoItem(todos[i], "" + i, 0);
     }
     if (save_list)
-        saveTodo(todos);
+        saveTodo(todos, function (success, result_text) {
+        });
 }
 function createTodoItem(todo, index, indent) {
     var todo_item_dom = document.createElement("div");

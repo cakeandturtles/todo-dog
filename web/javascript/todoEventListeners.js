@@ -11,7 +11,8 @@ function todoCheckClick(e, dom) {
         text_dom.className = "todo-text";
     }
     todos[index].checked = dom.checked;
-    saveTodo(todos);
+    saveTodo(todos, function (success, result_text) {
+    });
 }
 function todoPromptKeyDown(e, dom) {
     if (e.keyCode == TODO_NEW && dom.value != "") {
@@ -26,7 +27,6 @@ function todoPromptKeyDown(e, dom) {
         createTodoListFromItems(todos);
         if (start_subtasks) {
             var text_dom = findTodoTextByIndex("0_0");
-            console.log(text_dom);
             todoTextClick(null, text_dom);
         }
     }

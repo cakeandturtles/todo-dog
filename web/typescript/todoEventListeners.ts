@@ -12,7 +12,9 @@ function todoCheckClick(e, dom){
     }
 
     todos[index].checked = dom.checked;
-    saveTodo(todos);
+    saveTodo(todos, function(success, result_text){
+        //TODO??
+    });
 }
 
 function todoPromptKeyDown(e, dom){
@@ -33,7 +35,6 @@ function todoPromptKeyDown(e, dom){
         //if we're starting subtasks, focus the current subtask!
         if (start_subtasks){
             var text_dom = findTodoTextByIndex("0_0");
-            console.log(text_dom);
             todoTextClick(null, text_dom);
         }
     }

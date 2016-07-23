@@ -9,6 +9,7 @@ function login(username, password){
             alert("what to do in case of a mismatch of todo local and server?");
 
             document.getElementById("dialogConfirm").innerHTML = "OK";
+            document.getElementById("dialogConfirm").onclick = Dialog.Close;
             document.getElementById("dialogButton").style.display = "none";
         }
     });
@@ -27,6 +28,7 @@ function signup(username, password){
             });
 
             document.getElementById("dialogConfirm").innerHTML = "OK";
+            document.getElementById("dialogConfirm").onclick = Dialog.Close;
             document.getElementById("dialogButton").style.display = "none";
         }
     });

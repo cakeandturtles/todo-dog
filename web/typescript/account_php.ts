@@ -1,11 +1,15 @@
-function getSelectorValidator(responseText){
-    var selector_i1 = responseText.indexOf("selector=")+"selector=".length;
-    var selector_i2 = responseText.indexOf(";", selector_i1+1);
-    var selector = responseText.slice(selector_i1, selector_i2);
+function getPHPResponseVar(responseText, varname, semicolon = true){
+    var i1 = responseText.indexOf(varname+"=")+varname.length+1;
+    var i2 = responseText.length;
+    if (semicolon)
+        i2 = responseText.indexOf(";", i1+1);
 
-    var validator_i1 = responseText.indexOf("validator=")+"validator=".length;
-    var validator_i2 = responseText.indexOf(";", validator_i1+1);
-    var validator = responseText.slice(validator_i1, validator_i2);
+    return responseText.slice(i1, i2);
+}
+
+function getSelectorValidator(responseText){
+    var selector = getPHPResponseVar(responseText, "selector");
+    var validator = getPHPResponseVar(responseText, "validator");
 
     var selector_validator = selector + ":" + validator;
     return selector_validator;
