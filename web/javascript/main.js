@@ -8,6 +8,8 @@ function main() {
         todos = todo_list;
         USERNAME = username;
         initApp();
+        if (USERNAME !== null)
+            initProfileOption();
     });
 }
 window.onload = main;

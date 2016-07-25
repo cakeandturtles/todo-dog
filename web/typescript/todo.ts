@@ -82,6 +82,40 @@ class TodoItem{
     }
 }
 
+//to string
+function todoToString(todos: Array<TodoItem>, indent: number = 0){
+    var todo_text = "";
+    for (var i = 0; i < todos.length; i++){
+        for (var j = 0; j < indent; j++){
+            todo_text += "\t";
+        }
+        todo_text += todos[i].createString();
+        todo_text += "\n";
+        todo_text += todoToString(todos[i].subtasks, indent + 1);
+    }
+    return todo_text;
+}
+//from string
+function todoFromString(todo_str: string){
+    var todo_lines = todo_str.split("\n");
+    var todos = [];
+    var prev_todo = new TodoItem("", false);
+    for (var i = 0; i < todo_lines.length; i++){
+        var todo_line = todo_lines[i];
+        var todo = TodoItem.fromString(todo_line);
+        //TODO:: currently we don't allow nested subtasks
+        //but if we do, this needs to be fixed
+        if (todo_line[0] == '\t'){
+            prev_todo.subtasks.push(todo);
+        }
+        else{
+            todos.push(todo);
+            prev_todo = todo;
+        }
+    }
+    return todos;
+}
+
 function addTodoItem(text: string, index: number, duedate: Date){
     todos.splice(index, 0, new TodoItem(text, false));
 }

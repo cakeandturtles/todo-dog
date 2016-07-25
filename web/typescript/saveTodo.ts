@@ -7,7 +7,23 @@ function saveTodo(todos: Array<TodoItem>, callback){
         var selector_validator_arr = selector_validator.split(":");
         var selector = selector_validator_arr[0];
         var validator = selector_validator_arr[1];
-        save_todo_php(selector, validator, todoToString(todos), callback);
+
+        //append localStorageFallback to callback
+        var new_callback = function(success, result_text){
+            //saving to server failed, save to local storage,
+            //pass on callback
+            if (!success)
+                localStorageFallback(callback);
+            else{
+                //saving to server was success
+                //however, it's nice to have local memory anyway
+                //in case authentication fails at some point?
+                localStorageFallback(function(){});
+                callback(success, result_text);
+            }
+        }
+
+        save_todo_php(selector, validator, todoToString(todos), new_callback);
     }else{
         localStorageFallback(callback);
     }
@@ -19,7 +35,7 @@ function saveTodo(todos: Array<TodoItem>, callback){
             callback(false, "saved to local storage, not logged in");
         }else{
             //Sorry! no web storage support...
-            alert('need to add cookie support. email cakeandturtles@gmail.com');
+            callback(false, 'local storage not supported. please create an account.');
         }
     }
 }
@@ -33,7 +49,20 @@ function loadTodo(callback){
         var selector_validator_arr = selector_validator.split(":");
         var selector = selector_validator_arr[0];
         var validator = selector_validator_arr[1];
-        load_username_todo_php(selector, validator, callback);
+
+        //append localStorageFallback to callback
+        var new_callback = function(username, todos, resultText){
+            //load from server was a success
+            if (username !== null){
+                callback(username, todos, resultText);
+
+            //load from server failed, fallback to local
+            }else{
+                localStorageFallback(callback);
+            }
+        }
+
+        load_username_todo_php(selector, validator, new_callback);
     }else{
         localStorageFallback(callback);
     }
@@ -41,43 +70,10 @@ function loadTodo(callback){
     function localStorageFallback(callback){
         if (typeof(Storage) !== undefined){
             //Code for localstorage/sessionstorage
-            callback(null, loadFromLocalStorage(""));
+            callback(null, loadFromLocalStorage(""), "loading from local memory");
         }else{
             //Sorry! no web storage support...
-            callback(null, []);
-        }
-    }
-}
-
-//to string
-function todoToString(todos: Array<TodoItem>, indent: number = 0){
-    var todo_text = "";
-    for (var i = 0; i < todos.length; i++){
-        for (var j = 0; j < indent; j++){
-            todo_text += "\t";
-        }
-        todo_text += todos[i].createString();
-        todo_text += todoToString(todos[i].subtasks, indent + 1);
-        todo_text += "\n";
-    }
-    return todo_text;
-}
-//from string
-function todoFromString(todo_str: string){
-    var todo_lines = todo_str.split("\n");
-    var todos = [];
-    var prev_todo = new TodoItem("", false);
-    for (var i = 0; i < todo_lines.length; i++){
-        var todo_line = todo_lines[i];
-        var todo = TodoItem.fromString(todo_line);
-        //TODO:: currently we don't allow nested subtasks
-        //but if we do, this needs to be fixed
-        if (todo_line[0] == '\t'){
-            prev_todo.subtasks.push(todo);
-        }
-        else{
-            todos.push(todo);
-            prev_todo = todo;
+            callback(null, [], "please create an account! local memory not supported");
         }
     }
 }

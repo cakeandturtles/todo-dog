@@ -6,7 +6,15 @@ function saveTodo(todos, callback) {
         var selector_validator_arr = selector_validator.split(":");
         var selector = selector_validator_arr[0];
         var validator = selector_validator_arr[1];
-        save_todo_php(selector, validator, todoToString(todos), callback);
+        var new_callback = function (success, result_text) {
+            if (!success)
+                localStorageFallback(callback);
+            else {
+                localStorageFallback(function () { });
+                callback(success, result_text);
+            }
+        };
+        save_todo_php(selector, validator, todoToString(todos), new_callback);
     }
     else {
         localStorageFallback(callback);
@@ -17,7 +25,7 @@ function saveTodo(todos, callback) {
             callback(false, "saved to local storage, not logged in");
         }
         else {
-            alert('need to add cookie support. email cakeandturtles@gmail.com');
+            callback(false, 'local storage not supported. please create an account.');
         }
     }
 }
@@ -29,46 +37,25 @@ function loadTodo(callback) {
         var selector_validator_arr = selector_validator.split(":");
         var selector = selector_validator_arr[0];
         var validator = selector_validator_arr[1];
-        load_username_todo_php(selector, validator, callback);
+        var new_callback = function (username, todos, resultText) {
+            if (username !== null) {
+                callback(username, todos, resultText);
+            }
+            else {
+                localStorageFallback(callback);
+            }
+        };
+        load_username_todo_php(selector, validator, new_callback);
     }
     else {
         localStorageFallback(callback);
     }
     function localStorageFallback(callback) {
         if (typeof (Storage) !== undefined) {
-            callback(null, loadFromLocalStorage(""));
+            callback(null, loadFromLocalStorage(""), "loading from local memory");
         }
         else {
-            callback(null, []);
-        }
-    }
-}
-function todoToString(todos, indent) {
-    if (indent === void 0) { indent = 0; }
-    var todo_text = "";
-    for (var i = 0; i < todos.length; i++) {
-        for (var j = 0; j < indent; j++) {
-            todo_text += "\t";
-        }
-        todo_text += todos[i].createString();
-        todo_text += todoToString(todos[i].subtasks, indent + 1);
-        todo_text += "\n";
-    }
-    return todo_text;
-}
-function todoFromString(todo_str) {
-    var todo_lines = todo_str.split("\n");
-    var todos = [];
-    var prev_todo = new TodoItem("", false);
-    for (var i = 0; i < todo_lines.length; i++) {
-        var todo_line = todo_lines[i];
-        var todo = TodoItem.fromString(todo_line);
-        if (todo_line[0] == '\t') {
-            prev_todo.subtasks.push(todo);
-        }
-        else {
-            todos.push(todo);
-            prev_todo = todo;
+            callback(null, [], "please create an account! local memory not supported");
         }
     }
 }

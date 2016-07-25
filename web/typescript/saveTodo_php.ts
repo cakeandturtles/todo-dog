@@ -18,10 +18,9 @@ function save_todo_php(selector, validator, todo_text, callback){
 }
 
 function load_username_todo_php(selector, validator, callback){
-    xmlHttpRequest("php/load_todo.php",
+    xmlHttpRequest("php/load_username_todo.php",
         "selector="+selector+"&validator="+validator,
         function(responseText){
-            alert(responseText);
             if (responseText.indexOf("auth=Ok") != -1){
                 var username = getPHPResponseVar(responseText, "username");
                 //todo_text is not postfixed with a semicolon, it ends at end of responseText
@@ -30,6 +29,7 @@ function load_username_todo_php(selector, validator, callback){
                 //unscrub
                 todo_text = todo_text.split("aanndd").join("&");
                 todo_text = todo_text.split("eeqquuaallss").join("=");
+                var todos = todoFromString(todo_text);
                 callback(username, todoFromString(todo_text), "todo loaded!");
             }else if (responseText.indexOf("auth=Bad") != -1){
                 callback(null, loadFromLocalStorage(""), "authentication failed");

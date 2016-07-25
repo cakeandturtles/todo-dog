@@ -70,6 +70,36 @@ var TodoItem = (function () {
     };
     return TodoItem;
 }());
+function todoToString(todos, indent) {
+    if (indent === void 0) { indent = 0; }
+    var todo_text = "";
+    for (var i = 0; i < todos.length; i++) {
+        for (var j = 0; j < indent; j++) {
+            todo_text += "\t";
+        }
+        todo_text += todos[i].createString();
+        todo_text += "\n";
+        todo_text += todoToString(todos[i].subtasks, indent + 1);
+    }
+    return todo_text;
+}
+function todoFromString(todo_str) {
+    var todo_lines = todo_str.split("\n");
+    var todos = [];
+    var prev_todo = new TodoItem("", false);
+    for (var i = 0; i < todo_lines.length; i++) {
+        var todo_line = todo_lines[i];
+        var todo = TodoItem.fromString(todo_line);
+        if (todo_line[0] == '\t') {
+            prev_todo.subtasks.push(todo);
+        }
+        else {
+            todos.push(todo);
+            prev_todo = todo;
+        }
+    }
+    return todos;
+}
 function addTodoItem(text, index, duedate) {
     todos.splice(index, 0, new TodoItem(text, false));
 }

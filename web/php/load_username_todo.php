@@ -46,9 +46,9 @@ if ($auth){
         $todo_text = $row["todo_txt"];
     }
 
-    echo = "auth=Ok;";
-    echo = "username=$username;";
-    echo = "todo_text=$todo_text";
+    echo "auth=Ok;";
+    echo "username=$username;";
+    echo "todo_text=$todo_text";
 }else{
     echo "auth=Bad";
 }

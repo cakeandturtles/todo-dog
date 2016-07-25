@@ -8,6 +8,9 @@ function main(){
         USERNAME = username;
 
         initApp();
+
+        if (USERNAME !== null)
+            initProfileOption();
     });
 }
 window.onload = main;
